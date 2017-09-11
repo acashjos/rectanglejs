@@ -42,7 +42,7 @@ function Watchable(object, optionalDefaultListener, optionalListOfFieldsToListen
 
 
 	let activateIfDead = function activateIfDead() {
-		if(isActive || listeners.size == 0) return;
+		if (isActive || listeners.size == 0) return;
 		watchableChildren.forEach((watchable, key) => {
 			watchable._attachListener(onNotify)
 		})
@@ -68,6 +68,15 @@ function Watchable(object, optionalDefaultListener, optionalListOfFieldsToListen
 
 	for (var key in object) {
 		// if(object.hasOwnProperty(key)){
+		let props = Object.getOwnPropertyDescriptor(object, key)
+		if (props.get || props.set) {
+			if (props.configurable) {
+				props.get = props.get.bind(reactiveObj);
+				props.set = props.set.bind(reactiveObj);
+				Object.defineProperty(object, key, props)
+			}
+			else throw new TypeError(`Could not modify PropertyDescriptor. \n PropertyDescriptor for \`baseObject.${key}\` contains Getter and/or Setter and is non configurable too. WatchIt has to modify the getter/setter functions to make things work. `)
+		}
 		animateField(reactiveObj, key, object[key], closureFields)
 		lastKnownKeys.add(key);
 		// }
@@ -122,6 +131,7 @@ function animateField(parent, fieldName, value, closureFields) {
 		closureFields.watchableChildren.set(fieldName, value);
 		closureFields.object[fieldName] = value
 	}
+
 	// else TO.DO
 	descriptor.set = (val) => {
 		closureFields.activateIfDead();
@@ -133,7 +143,7 @@ function animateField(parent, fieldName, value, closureFields) {
 		closureFields.nudgeWatcher();
 	}
 	descriptor.get = () => {
-		closureFields.activateIfDead();		
+		closureFields.activateIfDead();
 		return closureFields.object[fieldName];
 	}
 	Object.defineProperty(parent, fieldName, descriptor)
@@ -181,7 +191,7 @@ function generateReactiveStub(closureFields) {
 		value: function _detachListener(listener) {
 			if (utils.isFunction(listener))
 				closureFields.listeners.delete(listener);
-			if(closureFields.listeners.size == 0)
+			if (closureFields.listeners.size == 0)
 				closureFields.destroy();
 		}
 	})

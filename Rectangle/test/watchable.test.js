@@ -5,8 +5,10 @@ let Watchable = require('../watchable');
 describe("Watchable", function() {
 	baseclass= {
 		foo:1,
-		invoke: fn => fn()
+		invoke: fn => fn(),
+		// get drake() { return "ramoray "+this.foo}
 	}
+	
 	a=Watchable(baseclass)
 	
 	it("Should return a pseudo Object that behaves same as the base class.", () => {
@@ -55,3 +57,7 @@ describe("Watchable", function() {
 
 
 })
+
+
+#1 a map of objects and watchables should be kept to avoid duplicate watchables on same base object
+#2 Consider the case when base class includes getters and setters
