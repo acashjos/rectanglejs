@@ -1,6 +1,8 @@
 let utils = require('./utils')
 
 
+let objectMap = new Map();
+
 function Watchable(object, optionalDefaultListener, optionalListOfFieldsToListen) {
 	// optionalDefaultListener will be added as the first listener - TO.DO
 	if (isWatchable(object)) {
@@ -8,6 +10,8 @@ function Watchable(object, optionalDefaultListener, optionalListOfFieldsToListen
 		// attach them on the watchable TO.DO
 		return object;
 	}
+	if( objectMap.has(object)) return objectMap.get(object);
+
 	let reactiveObj;
 	let closureFields;
 
@@ -75,13 +79,16 @@ function Watchable(object, optionalDefaultListener, optionalListOfFieldsToListen
 				props.set = props.set.bind(reactiveObj);
 				Object.defineProperty(object, key, props)
 			}
-			else throw new TypeError(`Could not modify PropertyDescriptor. \n PropertyDescriptor for \`baseObject.${key}\` contains Getter and/or Setter and is non configurable too. WatchIt has to modify the getter/setter functions to make things work. `)
+			else throw new TypeError(`Could not modify PropertyDescriptor. \n 
+				PropertyDescriptor for \`baseObject.${key}\` contains Getter and/or Setter and is non configurable too. 
+			\`WatchIt\` has to modify the getter/setter functions to make things work. `)
 		}
 		animateField(reactiveObj, key, object[key], closureFields)
 		lastKnownKeys.add(key);
 		// }
 	}
 
+	objectMap.set(object, reactiveObj);
 	return reactiveObj;
 }
 
