@@ -1,1 +1,0 @@
-console.log("Hello. Please run `npm test` to run tests. ")

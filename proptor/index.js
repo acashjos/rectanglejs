@@ -3,9 +3,9 @@
 
 
 
-window.Rectangle = window.Rectangle || {}
-
-window.Rectangle.createComponent = function CreateComponent(
+// window.Rectangle = window.Rectangle || {}
+let proptor = {}
+proptor.createComponent = function CreateComponent(
 	template, proptypes, controller, lifecycleEvents) 
 {
 	({ template, proptypes, controller, lifecycleEvents } 
@@ -17,15 +17,10 @@ window.Rectangle.createComponent = function CreateComponent(
 		let updateState = (state) => {
 			// do something
 			this.setState(state)
-			sealContext(context)
 		}
 
-		const context = utils.hasNativeFeature(Proxy)
-		? utils.generateProxyContext(updateState,props,ctx)
-		: utils.generatePOJOContext(props,ctx);
+		const context = {};
 		controller.bind(context)(context);
-
-		sealContext(context)
 	}
 
 	return generateClass(initialize)
@@ -54,19 +49,7 @@ function sanitizeLifecycleEvts(lyfEvts) {
 	return {};
 }
 
-function sealContext(context,updateState){
-	if(!context._hasNoProxy) return; // Proxy will handle the rest.
-	Object.keys(context).forEach( item => {
-		if(utils.isFunction(context[item]) && !context[item]._isSealed){
-			context[item] = (...args) => {
-				let result = context[item].call(null,...args);
-				updateState(context);
-				return result;
-			}
-			Object.defineProperty(context[item],"_isSealed", {value:true})
-		}
-	})
-}
+
 
 function verifyParams(_this, args) {
 	if (_this.constructor.name == "CreateComponent")
@@ -101,5 +84,5 @@ function verifyParams(_this, args) {
 	};
 }
 
-window.Rectangle.UI = preact;
+proptor.UI = preact;
 
