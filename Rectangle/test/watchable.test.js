@@ -20,7 +20,7 @@ describe("Watchable", function () {
 
 	it("Should should return same watchable instance when repeatedly called with same baseObject", () => {
 
-		let base ={};
+		let base = {};
 		let watchable1 = Watchable(base);
 		let watchable2 = Watchable(base);
 
@@ -69,26 +69,26 @@ describe("Watchable object", function () {
 		let listenerCallCounter = 0;
 		let cb = () => listenerCallCounter++;
 		a._attachListener(cb)
-		
+
 		let newValue = { baz: 1, qux: 2 };
 
 		a.car = "newCar";
 		expect(
-			listenerCallCounter, 
+			listenerCallCounter,
 			"listner not to be called when new property is added to a watchable object"
 		).to.equal(0);
-		
+
 		a._nudge();
 		expect(listenerCallCounter, "new property in the watchable object should be added during nudge call").to.equal(1)
 
 		a.invoke(() => { a.bar = newValue })
 		expect(
-			listenerCallCounter, 
+			listenerCallCounter,
 			"new fields inserted from member functions should trigger listener calls"
 		).to.equal(2)
 		expect(a.bar, "A child object should be converted to Watchable")
-		.to.be.instanceof(Watchable)
-		
+			.to.be.instanceof(Watchable)
+
 		listenerCallCounter = 0;
 		a.bar = { baz: 1, qux: 2 };
 		expect(listenerCallCounter, "listner to be called on value changes on a newly added field").to.equal(1);
@@ -103,12 +103,12 @@ describe("Watchable object", function () {
 
 
 	it("Should handle getters/setters in baseclass", () => {
-		
+
 		baseclass = {
 			foo: 1,
 			quak: 2,
 			invoke: fn => fn(),
-			get drake() { this.quake=3; return "ramoray "+this.foo},
+			get drake() { this.quake = 3; return "ramoray " + this.foo },
 			set drake(value) { this.foo = value; }
 		}
 
@@ -127,13 +127,84 @@ describe("Watchable object", function () {
 
 		let baseClassWithNonConfigurableSetter = {};
 		Object.defineProperty(baseClassWithNonConfigurableSetter, 'foo', {
-			get: ()=> 55,
-			set: ()=> {},
+			get: () => 55,
+			set: () => { },
 			configurable: false,
 			enumerable: true
 		})
 
-		expect(Watchable.bind(null,baseClassWithNonConfigurableSetter),
+		expect(Watchable.bind(null, baseClassWithNonConfigurableSetter),
+			"Should throw type error if base class has non-configurable propertyDescriptor with getters or setters"
+		).to.throw(TypeError);
+		a._detachListener(cb);
+	})
+
+
+	it("Should handle non-enumerable own properties in baseclass", () => {
+
+
+
+		let baseClassWithNonEnumerableProps = {};
+		Object.defineProperty(baseClassWithNonEnumerableProps, 'foo', {
+			value: 10,
+			writable: true,
+			configurable: false,
+			enumerable: false
+		})
+		Object.defineProperty(baseClassWithNonEnumerableProps, 'bar', {
+			value: 10,
+			writable: false,
+			configurable: false,
+			enumerable: false
+		})
+		Object.defineProperty(baseClassWithNonEnumerableProps, 'baz', {
+			get: () => 55,
+			set: () => { },
+			configurable: true,
+			enumerable: false
+		})
+
+
+		let a = Watchable(baseClassWithNonEnumerableProps)
+
+		let listenerCallCounter = 0;
+		let cb = () => listenerCallCounter++;
+		a._attachListener(cb)
+
+		a.foo = "new";
+		expect(listenerCallCounter,
+			"Should call listener when setting a value on non-enumerable field"
+		).to.equal(1);
+
+
+		a.bar = "new";
+		expect(listenerCallCounter,
+			"Should not call listener when setting a value on non-enumerable non-editable field"
+		).to.equal(1);
+
+
+		a.baz = "new";
+		expect(listenerCallCounter,
+			"Should call listener when setting a value through setter on non-enumerable field"
+		).to.equal(2);
+
+
+		let temp=a.baz;
+		expect(listenerCallCounter,
+			"Should call listener when getting a value through getter on non-enumerable field"
+		).to.equal(2);
+
+
+		baseClassWithNonEnumerableProps = {}
+		Object.defineProperty(baseClassWithNonEnumerableProps, 'quaz', {
+			get: () => 55,
+			set: () => { },
+			configurable: false,
+			enumerable: false
+		})
+
+
+		expect(Watchable.bind(null, baseClassWithNonEnumerableProps),
 			"Should throw type error if base class has non-configurable propertyDescriptor with getters or setters"
 		).to.throw(TypeError);
 		a._detachListener(cb);
@@ -143,4 +214,4 @@ describe("Watchable object", function () {
 })
 
 
-#1  Handle non-enumerable immediate-child properties too.
+// #1  Handle non-enumerable immediate-child properties too.
