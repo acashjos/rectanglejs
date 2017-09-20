@@ -1,17 +1,14 @@
 {
-  "name": "reactular",
-  "version": "1.0.0",
+  "name": "proptor",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "component.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Akash Kurian Jose",
+  "license": "MIT",
   "dependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^3.5.0",
-    "react": "^15.6.1"
+    "watcho": "git+https://github.com/acashjos/watch-o-js.git"
   }
 }
