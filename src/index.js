@@ -1,5 +1,18 @@
-//let utils = require('./utils')
-//let WatchO = require('./WatchO')
+let utils = require('./utils')
+let WatchO = require('watcho')
+
+
+
+
+key ideas.
+**********
+- ability to configure h function. hyperscript compatible.
+- middlewares that take {props,lifecycleEventHandlers} as params and returns modified (or not) props. it can call lifecycleEventHandlers to make decisions on props modification
+
+
+
+
+
 
 
 
