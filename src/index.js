@@ -17,8 +17,8 @@ key ideas.
 
 
 // window.Rectangle = window.Rectangle || {}
-let proptor = {}
-proptor.createComponent = function CreateComponent(
+let proptail = {}
+proptail.createComponent = function CreateComponent(
 	template, proptypes, controller, lifecycleEvents) 
 {
 	({ template, proptypes, controller, lifecycleEvents } 
@@ -97,5 +97,5 @@ function verifyParams(_this, args) {
 	};
 }
 
-proptor.UI = preact;
+proptail.UI = preact;
 

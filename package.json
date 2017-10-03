@@ -1,11 +1,11 @@
 {
-  "name": "proptor",
+  "name": "proptail",
   "version": "0.0.1",
   "description": "",
   "main": "component.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify src/index.js -o dist/proptor.js -s Proptor",
+    "build": "browserify src/index.js -o dist/proptail.js -s Proptail",
 
     "try": "browserify -h"
   },
